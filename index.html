@@ -123,6 +123,11 @@
             border: none;
             padding: 12px 15px;
         }
+
+        /* Añadido para los tabs de salarios */
+        .salary-tab-content {
+            padding: 1rem;
+        }
     </style>
 </head>
 <body>
@@ -139,14 +144,36 @@
             <div class="col-md-4">
                 <div class="card h-100">
                     <div class="card-header">
-                        <h5 class="mb-0">Ingresar Salario</h5>
+                        <h5 class="mb-0">Ingresar Salarios</h5>
                     </div>
                     <div class="card-body">
-                        <div class="mb-3">
-                            <label for="salary" class="form-label">Salario Quincenal:</label>
-                            <input type="number" class="form-control" id="salary" placeholder="Ingresa tu salario quincenal">
+                        <!-- Tabs de salario por quincena -->
+                        <ul class="nav nav-tabs" id="salaryTab" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="first-salary-tab" data-bs-toggle="tab" data-bs-target="#first-salary" type="button" role="tab" aria-controls="first-salary" aria-selected="true">Primera Quincena</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="second-salary-tab" data-bs-toggle="tab" data-bs-target="#second-salary" type="button" role="tab" aria-controls="second-salary" aria-selected="false">Segunda Quincena</button>
+                            </li>
+                        </ul>
+                        <div class="tab-content salary-tab-content" id="salaryTabContent">
+                            <!-- Contenido primera quincena -->
+                            <div class="tab-pane fade show active" id="first-salary" role="tabpanel" aria-labelledby="first-salary-tab">
+                                <div class="mb-3">
+                                    <label for="salaryFirst" class="form-label">Salario Primera Quincena:</label>
+                                    <input type="number" class="form-control" id="salaryFirst" placeholder="Ingresa el salario">
+                                </div>
+                                <button id="saveFirstSalary" class="btn btn-custom-primary w-100">Guardar</button>
+                            </div>
+                            <!-- Contenido segunda quincena -->
+                            <div class="tab-pane fade" id="second-salary" role="tabpanel" aria-labelledby="second-salary-tab">
+                                <div class="mb-3">
+                                    <label for="salarySecond" class="form-label">Salario Segunda Quincena:</label>
+                                    <input type="number" class="form-control" id="salarySecond" placeholder="Ingresa el salario">
+                                </div>
+                                <button id="saveSecondSalary" class="btn btn-custom-primary w-100">Guardar</button>
+                            </div>
                         </div>
-                        <button id="saveSalary" class="btn btn-custom-primary w-100">Guardar</button>
                     </div>
                 </div>
             </div>
@@ -203,27 +230,39 @@
                     </div>
                     <div class="card-body">
                         <div class="row g-3">
-                            <div class="col-12">
+                            <div class="col-6">
                                 <div class="summary-card income-card">
-                                    <h6>Salario Quincenal</h6>
-                                    <div id="summaryIncome" class="value">$0.00</div>
+                                    <h6>Salario 1ra</h6>
+                                    <div id="summaryIncomeFirst" class="value">$0.00</div>
                                 </div>
                             </div>
-                            <div class="col-12">
+                            <div class="col-6">
+                                <div class="summary-card income-card">
+                                    <h6>Salario 2da</h6>
+                                    <div id="summaryIncomeSecond" class="value">$0.00</div>
+                                </div>
+                            </div>
+                            <div class="col-6">
                                 <div class="summary-card expense-card">
-                                    <h6>Gastos Totales</h6>
-                                    <div id="summaryExpenses" class="value">$0.00</div>
+                                    <h6>Gastos 1ra</h6>
+                                    <div id="summaryExpensesFirst" class="value">$0.00</div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="summary-card expense-card">
+                                    <h6>Gastos 2da</h6>
+                                    <div id="summaryExpensesSecond" class="value">$0.00</div>
                                 </div>
                             </div>
                             <div class="col-6">
                                 <div class="summary-card balance-card">
-                                    <h6>Balance 1ra Quincena</h6>
+                                    <h6>Balance 1ra</h6>
                                     <div id="summaryBalanceFirst" class="value">$0.00</div>
                                 </div>
                             </div>
                             <div class="col-6">
                                 <div class="summary-card balance-card">
-                                    <h6>Balance 2da Quincena</h6>
+                                    <h6>Balance 2da</h6>
                                     <div id="summaryBalanceSecond" class="value">$0.00</div>
                                 </div>
                             </div>
@@ -322,7 +361,8 @@
     
     <script>
         // Variables globales
-        let salary = 0;
+        let salaryFirst = 0;
+        let salarySecond = 0;
         let expenses = [];
         let categoryChart = null;
         let periodChart = null;
@@ -334,18 +374,25 @@
 
         // Guardar datos en localStorage
         function saveData() {
-            localStorage.setItem('salary', salary);
+            localStorage.setItem('salaryFirst', salaryFirst);
+            localStorage.setItem('salarySecond', salarySecond);
             localStorage.setItem('expenses', JSON.stringify(expenses));
         }
 
         // Cargar datos desde localStorage
         function loadData() {
-            const savedSalary = localStorage.getItem('salary');
+            const savedSalaryFirst = localStorage.getItem('salaryFirst');
+            const savedSalarySecond = localStorage.getItem('salarySecond');
             const savedExpenses = localStorage.getItem('expenses');
             
-            if (savedSalary) {
-                salary = parseFloat(savedSalary);
-                document.getElementById('salary').value = salary;
+            if (savedSalaryFirst) {
+                salaryFirst = parseFloat(savedSalaryFirst);
+                document.getElementById('salaryFirst').value = salaryFirst;
+            }
+            
+            if (savedSalarySecond) {
+                salarySecond = parseFloat(savedSalarySecond);
+                document.getElementById('salarySecond').value = salarySecond;
             }
             
             if (savedExpenses) {
@@ -360,7 +407,6 @@
         // Actualizar resumen
         function updateSummary() {
             // Calcular totales
-            const totalExpenses = expenses.reduce((sum, expense) => sum + expense.amount, 0);
             const firstHalfExpenses = expenses
                 .filter(expense => expense.period === 'Primera Quincena')
                 .reduce((sum, expense) => sum + expense.amount, 0);
@@ -369,10 +415,12 @@
                 .reduce((sum, expense) => sum + expense.amount, 0);
             
             // Actualizar elementos HTML
-            document.getElementById('summaryIncome').textContent = formatCurrency(salary);
-            document.getElementById('summaryExpenses').textContent = formatCurrency(totalExpenses);
-            document.getElementById('summaryBalanceFirst').textContent = formatCurrency(salary - firstHalfExpenses);
-            document.getElementById('summaryBalanceSecond').textContent = formatCurrency(salary - secondHalfExpenses);
+            document.getElementById('summaryIncomeFirst').textContent = formatCurrency(salaryFirst);
+            document.getElementById('summaryIncomeSecond').textContent = formatCurrency(salarySecond);
+            document.getElementById('summaryExpensesFirst').textContent = formatCurrency(firstHalfExpenses);
+            document.getElementById('summaryExpensesSecond').textContent = formatCurrency(secondHalfExpenses);
+            document.getElementById('summaryBalanceFirst').textContent = formatCurrency(salaryFirst - firstHalfExpenses);
+            document.getElementById('summaryBalanceSecond').textContent = formatCurrency(salarySecond - secondHalfExpenses);
         }
 
         // Actualizar listas de gastos
@@ -525,38 +573,50 @@
             });
         }
 
+        // Mostrar notificación toast
+        function showToast(message) {
+            const toastContainer = document.createElement('div');
+            toastContainer.className = 'position-fixed bottom-0 end-0 p-3';
+            toastContainer.style.zIndex = '5';
+            toastContainer.innerHTML = `
+                <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="toast-header">
+                        <strong class="me-auto">Rastreador de Gastos</strong>
+                        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                    <div class="toast-body">
+                        ${message}
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(toastContainer);
+            
+            setTimeout(() => {
+                toastContainer.remove();
+            }, 3000);
+        }
+
         // Eventos
         document.addEventListener('DOMContentLoaded', function() {
             // Cargar datos al iniciar
             loadData();
             
-            // Guardar salario
-            document.getElementById('saveSalary').addEventListener('click', function() {
-                const salaryInput = document.getElementById('salary');
-                salary = parseFloat(salaryInput.value) || 0;
+            // Guardar salario primera quincena
+            document.getElementById('saveFirstSalary').addEventListener('click', function() {
+                const salaryInput = document.getElementById('salaryFirst');
+                salaryFirst = parseFloat(salaryInput.value) || 0;
                 saveData();
                 updateSummary();
-                
-                // Feedback visual
-                const toastContainer = document.createElement('div');
-                toastContainer.className = 'position-fixed bottom-0 end-0 p-3';
-                toastContainer.style.zIndex = '5';
-                toastContainer.innerHTML = `
-                    <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
-                        <div class="toast-header">
-                            <strong class="me-auto">Rastreador de Gastos</strong>
-                            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-                        </div>
-                        <div class="toast-body">
-                            Salario guardado correctamente
-                        </div>
-                    </div>
-                `;
-                document.body.appendChild(toastContainer);
-                
-                setTimeout(() => {
-                    toastContainer.remove();
-                }, 3000);
+                showToast('Salario de primera quincena guardado correctamente');
+            });
+            
+            // Guardar salario segunda quincena
+            document.getElementById('saveSecondSalary').addEventListener('click', function() {
+                const salaryInput = document.getElementById('salarySecond');
+                salarySecond = parseFloat(salaryInput.value) || 0;
+                saveData();
+                updateSummary();
+                showToast('Salario de segunda quincena guardado correctamente');
             });
             
             // Agregar gasto
@@ -589,27 +649,7 @@
                 updateSummary();
                 updateExpensesLists();
                 updateCharts();
-                
-                // Feedback visual
-                const toastContainer = document.createElement('div');
-                toastContainer.className = 'position-fixed bottom-0 end-0 p-3';
-                toastContainer.style.zIndex = '5';
-                toastContainer.innerHTML = `
-                    <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
-                        <div class="toast-header">
-                            <strong class="me-auto">Rastreador de Gastos</strong>
-                            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-                        </div>
-                        <div class="toast-body">
-                            Gasto agregado correctamente
-                        </div>
-                    </div>
-                `;
-                document.body.appendChild(toastContainer);
-                
-                setTimeout(() => {
-                    toastContainer.remove();
-                }, 3000);
+                showToast('Gasto agregado correctamente');
             });
         });
     </script>
